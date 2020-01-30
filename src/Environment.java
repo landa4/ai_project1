@@ -21,8 +21,6 @@ public class Environment {
     public Environment(int width, int height, State state){
         this.max_X = width - 1;
         this.max_Y = height - 1;
-
-        State.setMax(max_X, max_Y);
         currentState = state;
     }
     /**
@@ -54,26 +52,25 @@ public class Environment {
      */
     public List<Action> get_legal_actions(State state, boolean w_action) {
         LinkedList<Action> actions = new LinkedList<>();
-        int direction;
-        if(w_action){
-            direction = 1;
-        }else{
-            direction = -1;
-        }
-        for(Coordinate c : state.get_W_pawns()) {
+        HashSet<Coordinate> current_pawns;
+        if(w_action)
+            current_pawns = state.get_W_pawns();
+        else
+            current_pawns = state.get_B_pawns();
+        for(Coordinate c : current_pawns) {
             //action going forward
             Action current_action = new Action(c, Moves.STEP, w_action);
-            if (is_legal_action_for_pawn(state, current_action, true)) {
+            if (is_legal_action_for_pawn(state, current_action, w_action)) {
                 actions.add(current_action);
             }
             //acton take right
             current_action = new Action(c, Moves.TAKE_RIGTH, w_action);
-            if (is_legal_action_for_pawn(state, current_action, true)) {
+            if (is_legal_action_for_pawn(state, current_action, w_action)) {
                 actions.add(current_action);
             }
             //action take left
             current_action = new Action(c,Moves.TAKE_LEFT, w_action);
-            if (is_legal_action_for_pawn(state, current_action, true)) {
+            if (is_legal_action_for_pawn(state, current_action, w_action)) {
                 actions.add(current_action);
             }
         }
@@ -116,12 +113,12 @@ public class Environment {
         }
         if(friendly_pawns.contains(pawn)){
             if(s.coordinate_is_free(destination)){
-                if(new Action(pawn, Moves.STEP,white).get_to() == destination){
+                if(new Action(pawn, Moves.STEP,white).get_to().equals(destination)){
                     return true; // just go there
                 }
             }else{
                 if(enemy_pawns.contains(destination)){
-                    if(new Action(pawn, Moves.TAKE_LEFT,white).get_to() == destination ||new Action(pawn, Moves.TAKE_RIGTH,white).get_to() == destination){
+                    if(new Action(pawn, Moves.TAKE_LEFT,white).get_to().equals(destination) ||new Action(pawn, Moves.TAKE_RIGTH,white).get_to().equals(destination)){
                         return true; // can take other pawn
                     }
                 }
@@ -142,6 +139,7 @@ public class Environment {
 
         if(a.is_w_action()){
             if(get_legal_actions(s,!a.is_w_action()) == null){
+                System.out.println(true);
                 return StateStatus.WHITE_WINS; // Todo Ask if black can not make a move => draw or win?
             }else{
                 for (Coordinate c: state.get_W_pawns()){
