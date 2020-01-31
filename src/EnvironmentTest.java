@@ -8,7 +8,7 @@ public class EnvironmentTest {
     public static void main(String arg[]){
         int width = 3;
         int height = 5;
-
+    //lalal flos comment
         final boolean white_turns = true;
         State.setMax(width-1, height-1);
         Environment.max_X = width - 1;
