@@ -21,7 +21,7 @@ public class RandomAgent implements Agent
 		// TODO: add your own initialization code here
 		
     }
-
+	// Test
 	// lastMove is null the first time nextAction gets called (in the initial state)
     // otherwise it contains the coordinates x1,y1,x2,y2 of the move that the last player did
     public String nextAction(int[] lastMove) {
