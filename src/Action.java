@@ -27,9 +27,27 @@ public class Action {
             case TAKE_LEFT:
                 to = new Coordinate(from.getX() - 1, from.getY() + direction);
                 break;
-            case TAKE_RIGTH:
+            case TAKE_RIGHT:
                 to = new Coordinate(from.getX() + 1, from.getY() + direction);
                 break;
+        }
+    }
+    public Moves get_move(){
+        int direction;
+        if(w_action)
+            direction = 1;
+        else
+            direction = -1;
+
+        if(from.getX() == to.getX() && from.getY() + direction == to.getY()){
+            return Moves.STEP;
+        }else if(from.getX() == to.getX() + 1 && from.getY() + direction == to.getY()){
+            return Moves.TAKE_RIGHT;
+        }else if(from.getX() == to.getX() - 1 && from.getY() + direction == to.getY()){
+            return Moves.TAKE_LEFT;
+        }else{
+            System.err.println("this action " + this + " is not a legal move!");
+            return null;
         }
     }
 

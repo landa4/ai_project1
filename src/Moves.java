@@ -6,6 +6,6 @@
  */
 public enum Moves {
     STEP,
-    TAKE_RIGTH,
+    TAKE_RIGHT,
     TAKE_LEFT
 }

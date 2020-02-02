@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Random;
 
 public class Bob implements Agent {
@@ -8,6 +9,7 @@ public class Bob implements Agent {
     private int playclock; // this is how much time (in seconds) we have before nextAction needs to return a move
     private boolean myTurn; // whether it is this agent's turn or not
     private int width, height; // dimensions of the board
+    private boolean our_role; // true if bob is white false
 
     private Environment env;
 
@@ -15,30 +17,43 @@ public class Bob implements Agent {
         init(String role, int playclock) is called once before you have to select the first action. Use it to initialize the agent. role is either "white" or "black" and playclock is the number of seconds after which nextAction must return.
     */
     public void init(String role, int width, int height, int playclock) {
-        env = new Environment(width,height);
         this.role = role;
         this.playclock = playclock;
         myTurn = !role.equals("white");
         this.width = width;
         this.height = height;
         // TODO: add your own initialization code here
+        env = new Environment(width,height);
+        if(role.equals("white")){
+            our_role = true;
+        }else{
+            our_role = false;
+        }
 
+        System.out.println("role " + our_role);
     }
 
     // lastMove is null the first time nextAction gets called (in the initial state)
     // otherwise it contains the coordinates x1,y1,x2,y2 of the move that the last player did
     public String nextAction(int[] lastMove) {
+        boolean was_turn;
         if (lastMove != null) {
             int x1 = lastMove[0], y1 = lastMove[1], x2 = lastMove[2], y2 = lastMove[3];
             String roleOfLastPlayer;
             if (myTurn && role.equals("white") || !myTurn && role.equals("black")) {
                 roleOfLastPlayer = "white";
+                was_turn = true;
             } else {
                 roleOfLastPlayer = "black";
+                was_turn = false;
             }
             System.out.println(roleOfLastPlayer + " moved from " + x1 + "," + y1 + " to " + x2 + "," + y2);
             // TODO: 1. update your internal world model according to the action that was just executed
 
+            if(lastMove != null){
+                env.doAction(new Action(new Coordinate(x1 - 1,y1 - 1), new Coordinate(x2 - 1, y2 - 1), was_turn));
+                System.out.println(env.getCurrentState());
+            }
         }
 
         // update turn (above that line it myTurn is still for the previous state)
@@ -46,19 +61,11 @@ public class Bob implements Agent {
         if (myTurn) {
             // TODO: 2. run alpha-beta search to determine the best move
 
-            // Here we just construct a random move (that will most likely not even be possible),
-            // this needs to be replaced with the actual best move.
-            int x1,y1,x2,y2;
-            x1 = random.nextInt(width)+1;
-            x2 = x1 + random.nextInt(3)-1;
-            if (role.equals("white")) {
-                y1 = random.nextInt(height-1);
-                y2 = y1 + 1;
-            } else {
-                y1 = random.nextInt(height-1)+2;
-                y2 = y1 - 1;
-            }
-            return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
+            List<Action> possible_moves = env.get_legal_actions(env.currentState, our_role);
+
+            Action a = possible_moves.get(random.nextInt(possible_moves.size()));
+
+            return "(move " + (a.get_From().getX() + 1) + " " + (a.get_From().getY() +1) + " " + (a.get_to().getX() +1) + " " + (a.get_to().getY() +1)+ ")";
         } else {
             return "noop";
         }
@@ -68,5 +75,6 @@ public class Bob implements Agent {
     @Override
     public void cleanup() {
         // TODO: cleanup so that the agent is ready for the next match
+        env = null;
     }
 }

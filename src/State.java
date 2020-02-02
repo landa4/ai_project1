@@ -54,6 +54,8 @@ public class State {
             current_turn = "white's turn";
         else
             current_turn = "black's turn";
+        System.out.println("Amount of white pawns: " + w_pawns.size());
+        System.out.println("Amount of black pawns: " + b_pawns.size());
 
         for(int y = max_Y; y >= 0 ; y--){
             for(int x = 0; x <= max_X; x++){
@@ -69,6 +71,7 @@ public class State {
         }
         return current_turn + newline + field;
     }
+
 
     public HashSet<Coordinate> get_W_pawns() {
         return w_pawns;
