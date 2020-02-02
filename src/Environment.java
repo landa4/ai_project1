@@ -89,7 +89,7 @@ public class Environment {
      * @param a the action
      * @return
      */
-    public boolean is_legal_action_for_pawn(State s, Action a){ // todo change to private only public for testing
+    private boolean is_legal_action_for_pawn(State s, Action a){
         return is_legal_action_for_pawn(a.get_From(), s, a.get_to(), a.is_w_action());
     }
     /**
@@ -146,30 +146,53 @@ public class Environment {
      */
     public StateStatus is_winning_move(State s, Action a){
         State state = get_next_State(s,a);
+        return is_winning_state(state);
+    }
 
-        if(get_legal_actions(s,!a.is_w_action()).isEmpty()) // oponent can not make a turn
-            return StateStatus.DRAW;
-
-        if(a.is_w_action()){
-            for (Coordinate c: state.get_W_pawns()){
-                if(c.getY() == max_Y){ // white wins
-                    return StateStatus.WHITE_WINS;
-                }
-            }
-        }else {
-            for (Coordinate c : state.get_B_pawns()) {
-                if (c.getY() == 0) { // black win wins
-                    return StateStatus.BLACK_WINS;
-                }
+    public StateStatus is_winning_state(State state){
+        for (Coordinate c: state.get_W_pawns()){
+            if(c.getY() == max_Y){ // white wins
+                return StateStatus.WHITE_WINS;
             }
         }
+        for (Coordinate c : state.get_B_pawns()) {
+            if (c.getY() == 0) { // black win wins
+                return StateStatus.BLACK_WINS;
+            }
+        }
+        if(get_legal_actions(state,true).isEmpty() || get_legal_actions(state,false).isEmpty() ) // either white or black can make a move
+            return StateStatus.DRAW;
 
         return StateStatus.PLAY;
     }
 
     public int evaluate(State s){
-        //Todo heuristic stuff
-        return 0;
+        StateStatus status = is_winning_state(s);
+        switch (status){
+            case WHITE_WINS:
+                return 100;
+            case BLACK_WINS:
+                return -100;
+            case DRAW:
+                return 0;
+            case PLAY:
+                int distance_black = Integer.MAX_VALUE, distance_white = Integer.MAX_VALUE;
+
+                for (Coordinate c: s.get_W_pawns()){
+                    if(max_Y - c.getY() < distance_white){ // white wins
+                        distance_white = max_Y - c.getY();
+                    }
+                }
+                for (Coordinate c : s.get_B_pawns()) {
+                    if (c.getY() < distance_black) { // black win wins
+                        distance_black = c.getY();
+                    }
+                }
+
+                return distance_black - distance_white;
+        }
+        System.out.println("Error  in evaluate function with state: " + s);
+        return -404; // Error should not occur
     }
 
     public void doAction(Action a) {
