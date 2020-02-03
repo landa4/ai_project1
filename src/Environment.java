@@ -160,19 +160,25 @@ public class Environment {
                 return StateStatus.BLACK_WINS;
             }
         }
-        if(get_legal_actions(state,true).isEmpty() || get_legal_actions(state,false).isEmpty() ) // either white or black can make a move
+        if(get_legal_actions(state,true).isEmpty() || get_legal_actions(state,false).isEmpty() ) // either white or black can not make a move
             return StateStatus.DRAW;
 
         return StateStatus.PLAY;
     }
 
-    public int evaluate(State s){
+    public int evaluate(State s, boolean w_action){
         StateStatus status = is_winning_state(s);
+        int view;
+        if(w_action)
+            view = 1;
+        else
+            view = -1;
+
         switch (status){
             case WHITE_WINS:
-                return 100;
+                return 100 * view;
             case BLACK_WINS:
-                return -100;
+                return -100 * view;
             case DRAW:
                 return 0;
             case PLAY:
@@ -188,8 +194,7 @@ public class Environment {
                         distance_black = c.getY();
                     }
                 }
-
-                return distance_black - distance_white;
+                return (distance_black - distance_white) * view;
         }
         System.out.println("Error  in evaluate function with state: " + s);
         return -404; // Error should not occur

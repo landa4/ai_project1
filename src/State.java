@@ -10,7 +10,7 @@ public class State {
     /**
      * creates the initial state
      * @param maxX it is the max value of a legal column, as it null base. e.g. with = 4 then maxX is allowed to be 0,1,2,3
-     * @param maxY it is the max value of a legal row, as it null base. e.g. height = 3 then maxX is allowed to be 0,1,2
+     * @param maxY it is the max value of a legal row, as it null base. e.g. height = 3 then maxY is allowed to be 0,1,2
      */
     public State (int maxX, int maxY){
         max_X = maxX;
