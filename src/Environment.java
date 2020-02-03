@@ -60,21 +60,20 @@ public class Environment {
     /**
      * get all legal action for a state s when white or black is next
      * @param state the state
-     * @param w_action if true => white's turn, if false => black's turn
      * @return empty list, if no move is possible
      */
-    public List<Action> get_legal_actions(State state, boolean w_action) {
+    public List<Action> get_legal_actions(State state) {
         LinkedList<Action> actions = new LinkedList<>();
         HashSet<Coordinate> current_pawns;
 
-        if(w_action)
+        if(state.isW_turn())
             current_pawns = state.get_W_pawns();
         else
             current_pawns = state.get_B_pawns();
 
         for(Coordinate c : current_pawns) { // for every pawn
             for (Moves move : Moves.values()) { // check every move
-                Action current_action = new Action(c, move, w_action);
+                Action current_action = new Action(c, move, state.is_W_turn());
                 if (is_legal_action_for_pawn(state, current_action)) {
                     actions.add(current_action);
                 }
@@ -160,16 +159,20 @@ public class Environment {
                 return StateStatus.BLACK_WINS;
             }
         }
-        if(get_legal_actions(state,true).isEmpty() || get_legal_actions(state,false).isEmpty() ) // either white or black can not make a move
+        if(get_legal_actions(state).isEmpty())
             return StateStatus.DRAW;
 
         return StateStatus.PLAY;
     }
+    public boolean is_terminal_state(State s){
+        StateStatus status = is_winning_state(s);
+        return status == StateStatus.WHITE_WINS || status == StateStatus.BLACK_WINS || status == StateStatus.DRAW;
+    }
 
-    public int evaluate(State s, boolean w_action){
+    public int evaluate(State s){
         StateStatus status = is_winning_state(s);
         int view;
-        if(w_action)
+        if(s.isW_turn())
             view = 1;
         else
             view = -1;

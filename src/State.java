@@ -4,6 +4,7 @@ public class State {
 
     private HashSet<Coordinate> w_pawns;
     private HashSet<Coordinate> b_pawns;
+
     private boolean w_turn;
     private static int max_X = -1, max_Y = -1;
 
@@ -102,5 +103,8 @@ public class State {
     public static void setMax(int x, int y){
         max_X = x;
         max_Y = y;
+    }
+    public boolean isW_turn() {
+        return w_turn;
     }
 }

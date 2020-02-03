@@ -61,7 +61,7 @@ public class Bob implements Agent {
         if (myTurn) {
             // TODO: 2. run alpha-beta search to determine the best move
 
-            List<Action> possible_moves = env.get_legal_actions(env.currentState, our_role);
+            List<Action> possible_moves = env.get_legal_actions(env.currentState);
 
             Action a = possible_moves.get(random.nextInt(possible_moves.size()));
 
@@ -76,5 +76,20 @@ public class Bob implements Agent {
     public void cleanup() {
         // TODO: cleanup so that the agent is ready for the next match
         env = null;
+    }
+
+    public float miniMax (int depth, State s){
+        if(env.is_terminal_state(s) || depth <= 0){
+            return env.evaluate(s);
+        }
+        float bestValue = Float.NEGATIVE_INFINITY;
+
+        for(Action a : env.get_legal_actions(s)){
+            State successor = env.get_next_State(s,a);
+            float value = -miniMax(depth-1, successor);
+            bestValue = Math.max(value, bestValue);
+        }
+        return bestValue;
+
     }
 }
