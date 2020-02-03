@@ -77,32 +77,5 @@ public class Bob implements Agent {
         // TODO: cleanup so that the agent is ready for the next match
         env = null;
     }
-    public Action miniMaxRoot(int depth, State s){
-        float bestValue = Float.NEGATIVE_INFINITY;
-        Action bestAction  = null;
 
-        for(Action a : env.get_legal_actions(s)){
-            State successor = env.get_next_State(s,a);
-            float value = -miniMax(depth-1,successor);
-            if(value > bestValue){
-                bestValue = value;
-                bestAction = a;
-            }
-        }
-        return bestAction;
-    }
-
-    public float miniMax (int depth, State s){
-        if(env.is_terminal_state(s) || depth <= 0){
-            return env.evaluate(s);
-        }
-        float bestValue = Float.NEGATIVE_INFINITY;
-
-        for(Action a : env.get_legal_actions(s)){
-            State successor = env.get_next_State(s,a);
-            float value = -miniMax(depth-1, successor);
-            bestValue = Math.max(value, bestValue);
-        }
-        return bestValue;
-    }
 }
