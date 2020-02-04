@@ -12,7 +12,11 @@ public class Bob implements Agent {
     private boolean our_role; // true if bob is white false
 
     private Environment env;
+    private Heuristics heuristics;
 
+    public Bob(Heuristics h){
+        heuristics = h;
+    }
     /*
         init(String role, int playclock) is called once before you have to select the first action. Use it to initialize the agent. role is either "white" or "black" and playclock is the number of seconds after which nextAction must return.
     */
@@ -24,11 +28,8 @@ public class Bob implements Agent {
         this.height = height;
         // TODO: add your own initialization code here
         env = new Environment(width,height);
-        if(role.equals("white")){
-            our_role = true;
-        }else{
-            our_role = false;
-        }
+        heuristics.init(env);
+        our_role = role.equals("white");
 
         System.out.println("role " + our_role);
     }
@@ -50,10 +51,9 @@ public class Bob implements Agent {
             System.out.println(roleOfLastPlayer + " moved from " + x1 + "," + y1 + " to " + x2 + "," + y2);
             // TODO: 1. update your internal world model according to the action that was just executed
 
-            if(lastMove != null){
-                env.doAction(new Action(new Coordinate(x1 - 1,y1 - 1), new Coordinate(x2 - 1, y2 - 1), was_turn));
-                System.out.println(env.getCurrentState());
-            }
+            env.doAction(new Action(new Coordinate(x1 - 1,y1 - 1), new Coordinate(x2 - 1, y2 - 1), was_turn));
+            System.out.println(env.getCurrentState());
+
         }
 
         // update turn (above that line it myTurn is still for the previous state)
@@ -77,5 +77,4 @@ public class Bob implements Agent {
         // TODO: cleanup so that the agent is ready for the next match
         env = null;
     }
-
 }

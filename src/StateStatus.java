@@ -6,5 +6,4 @@ public enum StateStatus {
     BLACK_WINS,
     DRAW,
     PLAY // is neither a win nor a draw
-    ;
 }

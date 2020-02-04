@@ -46,11 +46,70 @@ public class State {
         this.w_turn = w_turn;
     }
 
+    /**
+     * Copy constructor
+     * @param s the state which is copied
+     */
+    public State (State s){
+        this.w_pawns = new HashSet<>(s.w_pawns);
+        this.b_pawns = new HashSet<>(s.b_pawns);
+        this.w_turn = s.w_turn;
+    }
+
+    /**
+     * changes this state to make Action a
+     * @param a the action which is performend on state s
+     * @param do_ = true => do the action which is performend on state s else undo
+     */
+    public void doAction(Action a, boolean do_){
+        if(do_){
+            if(a.is_w_action() != w_turn){
+                System.err.println("State turn: "+ w_turn +" not equal action turn: " + a.is_w_action());
+            }
+        }else {
+            if(a.is_w_action() == w_turn){
+                System.err.println("State turn: "+ w_turn +" is equal action turn: " + a.is_w_action() + "but it's an undo");
+            }
+        }
+
+        w_turn = !w_turn;
+
+        HashSet<Coordinate> friendly_pawns; // have the same color;
+        HashSet<Coordinate> enemy_pawns; // have the other color
+        Coordinate add, remove;
+
+        if(a.is_w_action()){
+            friendly_pawns = w_pawns;
+            enemy_pawns = b_pawns;
+        }else{
+            friendly_pawns = b_pawns;
+            enemy_pawns = w_pawns;
+        }
+        Moves move = a.get_move();
+
+        if(do_){
+            add = a.get_to();
+            remove = a.get_From();
+        }else{
+            add = a.get_From();
+            remove = a.get_to();
+        }
+        friendly_pawns.remove(remove);
+        friendly_pawns.add(add);
+
+        if(move.equals(Moves.TAKE_LEFT) || move.equals(Moves.TAKE_RIGHT)){
+            if(do_)
+                enemy_pawns.remove(a.get_to());
+            else
+                enemy_pawns.add(a.get_to());
+        }
+    }
+
     @Override
     public String toString() {
         String newline = System.getProperty("line.separator");
         String current_turn;
-        String field = "";
+        StringBuilder field = new StringBuilder();
         if(w_turn)
             current_turn = "white's turn";
         else
@@ -61,14 +120,14 @@ public class State {
         for(int y = max_Y; y >= 0 ; y--){
             for(int x = 0; x <= max_X; x++){
                 if(w_pawns.contains(new Coordinate(x ,y))){
-                    field += "W";
+                    field.append("W");
                 }else if(b_pawns.contains(new Coordinate(x ,y))){
-                    field += "B";
+                    field.append("B");
                 }else{
-                    field += "-";
+                    field.append("-");
                 }
             }
-            field += newline;
+            field.append(newline);
         }
         return current_turn + newline + field;
     }
@@ -88,8 +147,8 @@ public class State {
 
     /**
      * check if coordinate c is free
-     * @param c
-     * @return
+     * @param c coordinate
+     * @return if free => true, else false
      */
     public boolean coordinate_is_free(Coordinate c){
         return !w_pawns.contains(c) && !b_pawns.contains(c);
@@ -97,8 +156,8 @@ public class State {
 
     /**
      * only for testing
-     * @param x
-     * @param y
+     * @param x with
+     * @param y height
      */
     public static void setMax(int x, int y){
         max_X = x;

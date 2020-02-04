@@ -13,48 +13,28 @@ public class Environment {
      * @param height is is NOT null based
      */
     public Environment(int width, int height){
-        this.max_X = width - 1;
-        this.max_Y = height - 1;
+        max_X = width - 1;
+        max_Y = height - 1;
 
         currentState = new State(max_X, max_Y);
     }
     public Environment(int width, int height, State state){
-        this.max_X = width - 1;
-        this.max_Y = height - 1;
+        max_X = width - 1;
+        max_Y = height - 1;
         currentState = state;
     }
+
     /**
-     * calculates the next state for a given state s and action a
+     * CREATES the next state for a given state s and action a
      * @param s the state to evaluate
      * @param a the action which is performend on state s
      * @return the result of action a performend on state s
      */
+    @SuppressWarnings("use insted s.doAction() and s.undoAction() for performance")
     public State get_next_State(State s, Action a){
-        //Todo optimize: use state s and don´t create a new one
-        HashSet friendly_pawns; // have the same color;
-        HashSet enemy_pawns; // have the other color
-        if(a.is_w_action()){
-            friendly_pawns = s.get_W_pawns();
-            enemy_pawns = s.get_B_pawns();
-        }else{
-            friendly_pawns = s.get_B_pawns();
-            enemy_pawns = s.get_W_pawns();
-        }
-        Moves move = a.get_move();
-
-        friendly_pawns.remove(a.get_From());
-        friendly_pawns.add(a.get_to());
-
-        if(move.equals(Moves.TAKE_LEFT) || move.equals(Moves.TAKE_RIGHT)){
-            System.out.println("TAKEN");
-            enemy_pawns.remove(a.get_to());
-        }
-        if(a.is_w_action()){
-            return new State(friendly_pawns, enemy_pawns, false);
-        }else{
-            return new State(enemy_pawns, friendly_pawns, true);
-        }
-
+        State newState = new State(s);
+        newState.doAction(a, true);
+        return newState;
     }
 
     /**
@@ -86,7 +66,7 @@ public class Environment {
      * calculates if action a is possible in State s
      * @param s the state
      * @param a the action
-     * @return
+     * @return if action is possible => true else false
      */
     private boolean is_legal_action_for_pawn(State s, Action a){
         return is_legal_action_for_pawn(a.get_From(), s, a.get_to(), a.is_w_action());
@@ -97,12 +77,12 @@ public class Environment {
      * @param s the state (where the other pawns are), State s has to contain pawn otherwise false
      * @param destination of the move of the pawn
      * @param white color of the figure pawn
-     * @return
+     * @return if action is possible => true else false
      */
     private boolean is_legal_action_for_pawn(Coordinate pawn, State s, Coordinate destination, boolean white){
         if(destination.get_is_legal()){
-            HashSet friendly_pawns; // have the same color;
-            HashSet enemy_pawns; // have the other color
+            HashSet<Coordinate> friendly_pawns; // have the same color;
+            HashSet<Coordinate> enemy_pawns; // have the other color
             if(white){
                 friendly_pawns = s.get_W_pawns();
                 enemy_pawns = s.get_B_pawns();
@@ -113,16 +93,12 @@ public class Environment {
             if(friendly_pawns.contains(pawn)){
                 if(s.coordinate_is_free(destination)){
                     Action step = new Action(pawn, Moves.STEP,white);
-                    if(step.get_to().equals(destination)){
-                        return true; // just go there
-                    }
+                    return step.get_to().equals(destination); // just go there
                 }else{
                     if(enemy_pawns.contains(destination)){
                         Action take_left = new Action(pawn, Moves.TAKE_LEFT,white);
                         Action take_right = new Action(pawn, Moves.TAKE_RIGHT,white);
-                        if(take_left.get_to().equals(destination) || take_right.get_to().equals(destination)){
-                            return true; // can take other pawn
-                        }
+                        return take_left.get_to().equals(destination) || take_right.get_to().equals(destination); // can take other pawn
                     }
                 }
             }else{
@@ -139,9 +115,9 @@ public class Environment {
 
     /**
      * return if action a is a winning move from status s
-     * @param s
-     * @param a
-     * @return
+     * @param s state
+     * @param a action
+     * @return the StateStatus
      */
     public StateStatus is_winning_move(State s, Action a){
         State state = get_next_State(s,a);
@@ -167,40 +143,6 @@ public class Environment {
     public boolean is_terminal_state(State s){
         StateStatus status = is_winning_state(s);
         return status == StateStatus.WHITE_WINS || status == StateStatus.BLACK_WINS || status == StateStatus.DRAW;
-    }
-
-    public int evaluate(State s){
-        StateStatus status = is_winning_state(s);
-        int view;
-        if(s.isW_turn())
-            view = 1;
-        else
-            view = -1;
-
-        switch (status){
-            case WHITE_WINS:
-                return 100 * view;
-            case BLACK_WINS:
-                return -100 * view;
-            case DRAW:
-                return 0;
-            case PLAY:
-                int distance_black = Integer.MAX_VALUE, distance_white = Integer.MAX_VALUE;
-
-                for (Coordinate c: s.get_W_pawns()){
-                    if(max_Y - c.getY() < distance_white){ // white wins
-                        distance_white = max_Y - c.getY();
-                    }
-                }
-                for (Coordinate c : s.get_B_pawns()) {
-                    if (c.getY() < distance_black) { // black win wins
-                        distance_black = c.getY();
-                    }
-                }
-                return (distance_black - distance_white) * view;
-        }
-        System.out.println("Error  in evaluate function with state: " + s);
-        return -404; // Error should not occur
     }
 
     public void doAction(Action a) {

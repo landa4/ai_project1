@@ -3,10 +3,12 @@ public class Coordinate implements Cloneable {
 
 	private int x;
 	private int y;
-	private int errorValue = -1; // Error Coordinate : for example when testing, if a step outside the field is possible
 	private boolean is_legal = true; // is legal if it is inside of the field
 
 	public Coordinate(int x, int y) {
+		// Error Coordinate : for example when testing, if a step outside the field is possible
+		int errorValue = -1;
+
 		if(x >= 0 && x <= Environment.max_X)
 			this.x = x;
 		else{
@@ -48,6 +50,7 @@ public class Coordinate implements Cloneable {
 	public int getY() {
 		return y;
 	}
+
 	public boolean get_is_legal(){
 		return is_legal;
 	}
