@@ -28,6 +28,7 @@ public class AlphaBeta {
     }
 
     public float alphaBeta (int depth, State s, float alpha, float beta){
+        System.out.println("depth" + depth);
         if(env.is_terminal_state(s) || depth <= 0){
             return heuristics.eval(s);
         }
@@ -36,13 +37,17 @@ public class AlphaBeta {
         List<Action> actions = env.get_legal_actions(s);
         for(Action a : actions){
             s.doAction(a, true); // do action
+            System.out.println("depth " + depth + " Alpha "+ alpha +" beta " + beta + " state "+ s);
             float value = -alphaBeta(depth-1, s, -beta, -alpha);
             s.doAction(a,false); // undo action
             bestValue = Math.max(value, bestValue);
             if(bestValue > alpha){
                 alpha = bestValue;
-                if(alpha >=beta)
+                if(alpha >=beta){
+                    System.out.println("did pruning");
                     break;
+                }
+
             }
         }
         return bestValue;

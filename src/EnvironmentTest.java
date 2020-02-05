@@ -14,23 +14,19 @@ public class EnvironmentTest {
         int width = 3;
         int height = 5;
 
-        final boolean white_turns = false;
+        final boolean white_turns = true;
         State.setMax(width-1, height-1);
         Environment.max_X = width - 1;
         Environment.max_Y = height - 1;
 //        Environment env = new Environment(width,height); // init like starting a new game
 
         HashSet<Coordinate> white_pawns = new HashSet<>();
-        white_pawns.add(new Coordinate(0,2));
-        white_pawns.add(new Coordinate(2,2));
-        white_pawns.add(new Coordinate(2,1));
+        white_pawns.add(new Coordinate(0,1));
+        white_pawns.add(new Coordinate(1,2));
+
 
         HashSet<Coordinate> black_pawns = new HashSet<>();
-        black_pawns.add(new Coordinate(0,4));
-        black_pawns.add(new Coordinate(2,4));
-        black_pawns.add(new Coordinate(0,3));
         black_pawns.add(new Coordinate(2,3));
-        black_pawns.add(new Coordinate(1,1));
 
 
         State s = new State(white_pawns, black_pawns, white_turns);
