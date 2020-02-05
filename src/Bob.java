@@ -63,6 +63,9 @@ public class Bob implements Agent {
 
             List<Action> possible_moves = env.get_legal_actions(env.currentState);
 
+            if(possible_moves.isEmpty())
+                System.err.println("No more moves possible");
+
             Action a = possible_moves.get(random.nextInt(possible_moves.size()));
 
             return "(move " + (a.get_From().getX() + 1) + " " + (a.get_From().getY() +1) + " " + (a.get_to().getX() +1) + " " + (a.get_to().getY() +1)+ ")";

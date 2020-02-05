@@ -14,19 +14,20 @@ public class EnvironmentTest {
         int width = 3;
         int height = 5;
 
-        final boolean white_turns = true;
+        final boolean white_turns = false;
         State.setMax(width-1, height-1);
         Environment.max_X = width - 1;
         Environment.max_Y = height - 1;
 //        Environment env = new Environment(width,height); // init like starting a new game
 
         HashSet<Coordinate> white_pawns = new HashSet<>();
-        white_pawns.add(new Coordinate(0,1));
-        white_pawns.add(new Coordinate(1,2));
+        white_pawns.add(new Coordinate(0,2));
+        white_pawns.add(new Coordinate(2,1));
 
 
         HashSet<Coordinate> black_pawns = new HashSet<>();
-        black_pawns.add(new Coordinate(2,3));
+        black_pawns.add(new Coordinate(1,3));
+//        black_pawns.add(new Coordinate(2,3));
 
 
         State s = new State(white_pawns, black_pawns, white_turns);
@@ -46,10 +47,10 @@ public class EnvironmentTest {
             System.out.println(a);
         }
         Action nextAction = null;
-        int max_depth = 3;
-        for(int i = 0; i < max_depth; i++){
-            nextAction = alphaBeta.alphaBetaRoot(i, env.currentState, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY);
-        }
+        int max_depth = 5;
+       // for(int i = 0; i < max_depth; i++){
+            nextAction = alphaBeta.alphaBetaRoot(max_depth, env.currentState, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY);
+        //}
         System.out.println();
         if(nextAction != null){
             System.out.println("bester Zug angewand");
