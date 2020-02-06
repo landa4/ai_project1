@@ -13,6 +13,7 @@ public class Bob implements Agent {
 
     private Environment env;
     private Heuristics heuristics;
+    private AlphaBeta alphaBeta;
 
     public Bob(Heuristics h){
         heuristics = h;
@@ -29,6 +30,7 @@ public class Bob implements Agent {
         // TODO: add your own initialization code here
         env = new Environment(width,height);
         heuristics.init(env);
+        alphaBeta = new AlphaBeta(env, heuristics);
         our_role = role.equals("white");
 
         System.out.println("role " + our_role);
@@ -37,6 +39,7 @@ public class Bob implements Agent {
     // lastMove is null the first time nextAction gets called (in the initial state)
     // otherwise it contains the coordinates x1,y1,x2,y2 of the move that the last player did
     public String nextAction(int[] lastMove) {
+        double start = System.currentTimeMillis();
         boolean was_turn;
         if (lastMove != null) {
             int x1 = lastMove[0], y1 = lastMove[1], x2 = lastMove[2], y2 = lastMove[3];
@@ -61,14 +64,26 @@ public class Bob implements Agent {
         if (myTurn) {
             // TODO: 2. run alpha-beta search to determine the best move
 
-            List<Action> possible_moves = env.get_legal_actions(env.currentState);
+            State perform_state = new State(env.currentState);
+            Action nextAction;
+            int total_state_expansion = 0;
+            int i = 0;
+            try {
+                for(;; i++){
+                    alphaBeta.alphaBetaRoot(i,perform_state, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, start,playclock * 1000f);
+                    //alphaBeta.print_result_of_iteration();
+                    total_state_expansion += alphaBeta.get_state_expansions_for_iteration();
+                }
+            }catch (OutOfTimeException e){
+                nextAction = alphaBeta.getBestAction();
+                System.out.println("------------------------------------");
+                System.out.println("max depth limit: " + i);
+                System.out.println("State expansions: " + total_state_expansion);
+                System.out.println("Iteration take: " + (System.currentTimeMillis()-start));
+                System.out.println("------------------------------------");
+            }
 
-            if(possible_moves.isEmpty())
-                System.err.println("No more moves possible");
-
-            Action a = possible_moves.get(random.nextInt(possible_moves.size()));
-
-            return "(move " + (a.get_From().getX() + 1) + " " + (a.get_From().getY() +1) + " " + (a.get_to().getX() +1) + " " + (a.get_to().getY() +1)+ ")";
+            return "(move " + (nextAction.get_From().getX() + 1) + " " + (nextAction.get_From().getY() +1) + " " + (nextAction.get_to().getX() +1) + " " + (nextAction.get_to().getY() +1)+ ")";
         } else {
             return "noop";
         }

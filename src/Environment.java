@@ -132,7 +132,6 @@ public class Environment {
         }
         for (Coordinate c : state.get_B_pawns()) {
             if (c.getY() == 0) { // black win wins
-                System.out.println(true);
                 return StateStatus.BLACK_WINS;
             }
         }

@@ -22,7 +22,6 @@ public class SimpleHeuristics implements Heuristics {
 			case WHITE_WINS:
 				return 100 * view;
 			case BLACK_WINS:
-				System.out.println(true);
 				return -100 * view;
 			case DRAW:
 				return 0;
