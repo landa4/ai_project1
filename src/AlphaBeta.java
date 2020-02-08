@@ -38,6 +38,7 @@ public class AlphaBeta {
                 bestAction = a;
             }
         }
+        //System.out.println("bestValue "+bestValue);
         best_action_at_all = bestAction;
         return bestAction;
     }

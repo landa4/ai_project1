@@ -62,6 +62,25 @@ public class Environment {
         return actions;
     }
 
+    public int amount_of_threatened_pawns(State s){
+        int amount = 0;
+        HashSet<Coordinate> friendly_pawns;
+        if(s.isW_turn()){
+            friendly_pawns = s.get_W_pawns();
+        }
+        else{
+            friendly_pawns = s.get_B_pawns();
+        }
+        for(Coordinate c : friendly_pawns){
+            Action left = new Action(c, Moves.TAKE_LEFT, s.isW_turn());
+            Action right = new Action(c, Moves.TAKE_RIGHT, s.isW_turn());
+            if (!is_legal_action_for_pawn(s, right) && !is_legal_action_for_pawn(s, left) ) {
+                amount++;
+            }
+        }
+        return amount;
+    }
+
     /**
      * calculates if action a is possible in State s
      * @param s the state

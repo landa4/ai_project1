@@ -5,7 +5,7 @@
  * TAKE_LEFT is absolute, meaning always from the view of the white player
  */
 public enum Moves {
-    STEP,
     TAKE_RIGHT,
-    TAKE_LEFT
+    TAKE_LEFT,
+    STEP,
 }
