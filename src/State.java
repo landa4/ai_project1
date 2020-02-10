@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.Objects;
 
 public class State {
 
@@ -7,6 +8,21 @@ public class State {
 
     private boolean w_turn;
     private static int max_X = -1, max_Y = -1;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        State state = (State) o;
+        return w_turn == state.w_turn &&
+                w_pawns.equals(state.w_pawns) &&
+                b_pawns.equals(state.b_pawns);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(w_pawns, b_pawns, w_turn);
+    }
 
     /**
      * creates the initial state

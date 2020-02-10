@@ -62,7 +62,7 @@ public class Environment {
         return actions;
     }
 
-    public int amount_of_threatened_pawns(State s){
+    public int amount_of_not_threatened_pawns(State s){
         int amount = 0;
         HashSet<Coordinate> friendly_pawns;
         if(s.isW_turn()){

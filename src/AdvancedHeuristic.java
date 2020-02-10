@@ -1,5 +1,3 @@
-import java.util.HashSet;
-
 public class AdvancedHeuristic implements Heuristics{
     /**
      * reference to the environment to be able to figure out positions of obstacles
@@ -46,7 +44,7 @@ public class AdvancedHeuristic implements Heuristics{
                     }
                 }
 
-                return (distance_black - distance_white) * view + (s.get_B_pawns().size() - s.get_W_pawns().size()) * view * (-1) + env.amount_of_threatened_pawns(s);
+                return (distance_black - distance_white) * view + (s.get_B_pawns().size() - s.get_W_pawns().size()) * view * (-1) + env.amount_of_not_threatened_pawns(s);
         }
         System.out.println("Error  in evaluate function with state: " + s);
         return -404; // Error should not occur
